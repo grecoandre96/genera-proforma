@@ -624,12 +624,14 @@ input.db-fill{background:#fdf8ee;border-color:#e8d5a0;color:#555}
 
     <div class="field">
       <label>Store *</label>
-      <select name="nome_store" required>
+      <select name="nome_store" id="nome_store" required
+              onchange="document.getElementById('store_email').value=this.options[this.selectedIndex].dataset.email||''">
         <option value="">Seleziona store&#8230;</option>
         {% for store in stores %}
-        <option value="{{ store }}">{{ store }}</option>
+        <option value="{{ store.name }}" data-email="{{ store.email }}">{{ store.name }}</option>
         {% endfor %}
       </select>
+      <input type="hidden" name="store_email" id="store_email">
     </div>
 
     <div class="g2">
@@ -894,6 +896,8 @@ def genera():
                     'filename':        filename,
                     'numero':          numero,
                     'ragione_sociale': fd.get('ragione_sociale', ''),
+                    'nome_store':      fd.get('nome_store', ''),
+                    'store_email':     fd.get('store_email', ''),
                     'data':            datetime.date.today().isoformat(),
                     'pdf_base64':      base64.b64encode(pdf_bytes).decode(),
                 }, timeout=15)
