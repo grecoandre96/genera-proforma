@@ -331,14 +331,27 @@ def generate_pdf(fd, numero):
     for xp in col_x[1:-1]:
         vline(xp, y, y - row_h)
 
-    txt(col_x[1] + 1.5*mm, y - 4.5*mm, desc, size=8.5)
-    if store_line1:
-        txt(col_x[1] + 1.5*mm, y - 9*mm, store_line1, size=8.5)
-    if store_line2:
-        txt(col_x[1] + 1.5*mm, y - 13*mm, store_line2, size=8.5)
-
-    r1_y = y - 5*mm
-    r2_y = y - 10*mm if has_row2 else None
+    if has_row2:
+        # Layout fascia 2: store prima, poi data, poi numeri allineati per fascia
+        if store_line1:
+            txt(col_x[1] + 1.5*mm, y - 4.5*mm, store_line1, size=8.5)
+        if store_line2:
+            txt(col_x[1] + 1.5*mm, y - 9*mm,    store_line2, size=8.5)
+            txt(col_x[1] + 1.5*mm, y - 13.5*mm, desc,        size=8.5)
+            r1_y = y - 13.5*mm
+            r2_y = y - 18*mm
+        else:
+            txt(col_x[1] + 1.5*mm, y - 9*mm, desc, size=8.5)
+            r1_y = y - 9*mm
+            r2_y = y - 13.5*mm
+    else:
+        txt(col_x[1] + 1.5*mm, y - 4.5*mm, desc, size=8.5)
+        if store_line1:
+            txt(col_x[1] + 1.5*mm, y - 9*mm, store_line1, size=8.5)
+        if store_line2:
+            txt(col_x[1] + 1.5*mm, y - 13*mm, store_line2, size=8.5)
+        r1_y = y - 5*mm
+        r2_y = None
 
     txt(col_x[3] + li_cols[3][1] - 1.5*mm, r1_y, str(num_coperti),       size=9, align='right')
     txt(col_x[4] + li_cols[4][1] - 1.5*mm, r1_y, fmt_it(prezzo_persona), size=9, align='right')
@@ -346,10 +359,10 @@ def generate_pdf(fd, numero):
     txt(col_x[7] + 1.5*mm,                 r1_y, 'I10',                  size=9)
 
     if has_row2:
-        txt(col_x[3] + li_cols[3][1] - 1.5*mm, r2_y, str(num_coperti_2),    size=9, align='right')
+        txt(col_x[3] + li_cols[3][1] - 1.5*mm, r2_y, str(num_coperti_2),       size=9, align='right')
         txt(col_x[4] + li_cols[4][1] - 1.5*mm, r2_y, fmt_it(prezzo_persona_2), size=9, align='right')
-        txt(col_x[6] + li_cols[6][1] - 1.5*mm, r2_y, fmt_it(imp2),          size=9, align='right')
-        txt(col_x[7] + 1.5*mm,                 r2_y, 'I10',                 size=9)
+        txt(col_x[6] + li_cols[6][1] - 1.5*mm, r2_y, fmt_it(imp2),             size=9, align='right')
+        txt(col_x[7] + 1.5*mm,                 r2_y, 'I10',                    size=9)
 
     y -= row_h
 
@@ -397,7 +410,7 @@ def generate_pdf(fd, numero):
     sc_row_h = 5.5 * mm
     sc_cols  = [0.28, 0.48, 0.24]
 
-    sc_righe = [(data_cena, 'Acconto', acconto), (data_cena, 'Saldo', saldo)] \
+    sc_righe = [(today, 'Acconto', acconto), (data_cena, 'Saldo', saldo)] \
                if acconto > 0 else \
                [(data_cena, 'Bonifico bancario', totale)]
 
@@ -534,6 +547,10 @@ input.db-fill{background:#fdf8ee;border-color:#e8d5a0;color:#555}
 .calc-row.total-row{border-top:1px solid #e0c870;margin-top:8px;padding-top:10px}
 .calc-row.total-row .lbl{font-size:14px;font-weight:700;color:#111}
 .calc-row.total-row .val{font-size:16px;font-weight:800;color:#111}
+.calc-row.bold-row .lbl{font-size:14px;font-weight:700;color:#111}
+.calc-row.bold-row .val{font-size:16px;font-weight:800;color:#111}
+.calc-row.dim-row .lbl{color:#ccc}
+.calc-row.dim-row .val{color:#ccc}
 
 /* Bottoni */
 .btn-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:28px}
@@ -678,19 +695,19 @@ input.db-fill{background:#fdf8ee;border-color:#e8d5a0;color:#555}
 
     <!-- ── PREVIEW CALCOLO ── -->
     <div class="calc-box">
-      <div class="calc-row">
+      <div class="calc-row bold-row">
         <span class="lbl">Totale IVA inclusa</span>
         <span class="val" id="cp_tot">&#8364; 0,00</span>
       </div>
-      <div class="calc-row">
+      <div class="calc-row dim-row">
         <span class="lbl">di cui Imponibile</span>
         <span class="val" id="cp_imp">&#8364; 0,00</span>
       </div>
-      <div class="calc-row total-row">
+      <div class="calc-row dim-row">
         <span class="lbl">di cui IVA 10%</span>
         <span class="val" id="cp_iva">&#8364; 0,00</span>
       </div>
-      <div class="calc-row" id="row_acconto" style="display:none;border-top:1px solid #e0c870;margin-top:8px;padding-top:10px">
+      <div class="calc-row dim-row" id="row_acconto" style="display:none;border-top:1px solid #e0c870;margin-top:8px;padding-top:10px">
         <span class="lbl">Acconto</span>
         <span class="val" id="cp_acc">&#8364; 0,00</span>
       </div>
