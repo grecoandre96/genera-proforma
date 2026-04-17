@@ -62,8 +62,11 @@ def get_next_number():
     with _counter_lock:
         data = {'current': 29}
         if os.path.exists(COUNTER_FILE):
-            with open(COUNTER_FILE) as f:
-                data = json.load(f)
+            try:
+                with open(COUNTER_FILE) as f:
+                    data = json.load(f)
+            except Exception:
+                pass
         data['current'] += 1
         os.makedirs(DATA_DIR, exist_ok=True)
         with open(COUNTER_FILE, 'w') as f:
@@ -74,8 +77,11 @@ def peek_next_number():
     with _counter_lock:
         data = {'current': 29}
         if os.path.exists(COUNTER_FILE):
-            with open(COUNTER_FILE) as f:
-                data = json.load(f)
+            try:
+                with open(COUNTER_FILE) as f:
+                    data = json.load(f)
+            except Exception:
+                pass
         return data['current'] + 1
 
 
@@ -610,7 +616,7 @@ input.db-fill{background:#fdf8ee;border-color:#e8d5a0;color:#555}
         <label>Partita IVA *</label>
         <input name="partita_iva" id="partita_iva" required placeholder="es. 05178360961"
                oninput="validaPiva(this)">
-        <span id="piva_err" style="display:none;color:#c0392b;font-size:11px;margin-top:4px;display:block"></span>
+        <span id="piva_err" style="display:none;color:#c0392b;font-size:11px;margin-top:4px"></span>
       </div>
       <div class="field">
         <label>Codice Cliente</label>
@@ -913,7 +919,10 @@ def search_clienti():
         import requests as req
         resp = req.get(n8n_url, params={'q': q}, timeout=5)
         resp.raise_for_status()
-        return jsonify(resp.json())
+        data = resp.json()
+        if not isinstance(data, list):
+            return jsonify([])
+        return jsonify(data)
     except Exception as e:
         app.logger.error(f'[/clienti] errore chiamata n8n: {e}')
         return jsonify([])
