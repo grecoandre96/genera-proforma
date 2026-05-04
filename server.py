@@ -614,7 +614,7 @@ input.db-fill{background:#fdf8ee;border-color:#e8d5a0;color:#555}
     <div class="g2">
       <div class="field">
         <label>Partita IVA *</label>
-        <input name="partita_iva" id="partita_iva" required>
+        <input name="partita_iva" id="partita_iva" required placeholder="es. 05178360961">
       </div>
       <div class="field">
         <label>Codice Cliente</label>
