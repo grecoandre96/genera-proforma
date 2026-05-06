@@ -627,12 +627,12 @@ input.db-fill{background:#fdf8ee;border-color:#e8d5a0;color:#555}
     </div>
     <div class="field">
       <label>Codice SDI *</label>
-      <select name="codice_sdi" id="codice_sdi" required>
-        <option value="">Seleziona codice SDI&hellip;</option>
+      <input list="sdi_list" name="codice_sdi" id="codice_sdi" required placeholder="Seleziona o scrivi il codice SDI&hellip;" autocomplete="off">
+      <datalist id="sdi_list">
         {% for code in sdi_codes %}
-        <option value="{{ code }}">{{ code }}</option>
+        <option value="{{ code }}">
         {% endfor %}
-      </select>
+      </datalist>
     </div>
 
     <!-- ── MODIFICA PROFORMA ── -->
