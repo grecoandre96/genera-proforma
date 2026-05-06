@@ -613,8 +613,14 @@ input.db-fill{background:#fdf8ee;border-color:#e8d5a0;color:#555}
     </div>
     <div class="g2">
       <div class="field">
-        <label>Partita IVA *</label>
-        <input name="partita_iva" id="partita_iva" required placeholder="es. 05178360961">
+        <label>Partita IVA *
+          <select id="tipo_piva" onchange="aggiornaTipoPiva()" style="margin-left:8px;font-size:11px;font-weight:normal;padding:2px 5px;border:1px solid #ccc;border-radius:4px;cursor:pointer;color:#555">
+            <option value="it">🇮🇹 Italiana</option>
+            <option value="es">🌍 Straniera</option>
+          </select>
+        </label>
+        <input name="partita_iva" id="partita_iva" required placeholder="es. 05178360961" maxlength="11" oninput="validaPiva(this)">
+        <span id="piva_err" style="display:none;color:#c0392b;font-size:11px;margin-top:4px"></span>
       </div>
       <div class="field">
         <label>Codice Cliente</label>
@@ -795,6 +801,37 @@ document.addEventListener('click', function(e){
     document.getElementById('ac_list').classList.remove('open');
   }
 });
+
+function aggiornaTipoPiva() {
+  var tipo = document.getElementById('tipo_piva').value;
+  var inp  = document.getElementById('partita_iva');
+  var err  = document.getElementById('piva_err');
+  inp.value = '';
+  err.style.display = 'none';
+  inp.style.borderColor = '';
+  if (tipo === 'it') {
+    inp.maxLength   = 11;
+    inp.placeholder = 'es. 05178360961';
+  } else {
+    inp.maxLength   = 50;
+    inp.placeholder = 'es. B67098210000';
+  }
+}
+
+function validaPiva(el) {
+  var tipo = document.getElementById('tipo_piva').value;
+  if (tipo !== 'it') return;
+  var v   = el.value.replace(/ /g, '');
+  var err = document.getElementById('piva_err');
+  if (v.length > 0 && (v.length !== 11 || !/^[0-9]{11}$/.test(v))) {
+    err.textContent    = 'La P.IVA italiana deve essere 11 cifre numeriche';
+    err.style.display  = 'block';
+    el.style.borderColor = '#c0392b';
+  } else {
+    err.style.display  = 'none';
+    el.style.borderColor = '';
+  }
+}
 
 function esc(s){
   return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
