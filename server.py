@@ -908,15 +908,6 @@ def index():
                                   sdi_codes=SDI_CODES)
 
 
-@app.route('/debug-search')
-def debug_search():
-    import requests as req
-    url = os.environ.get('N8N_SEARCH_URL', 'NON_IMPOSTATA')
-    try:
-        resp = req.get(url, params={'q': 'test'}, timeout=10)
-        return jsonify({'url': url, 'status': resp.status_code, 'risposta': resp.json()})
-    except Exception as e:
-        return jsonify({'url': url, 'errore': str(e)})
 
 @app.route('/clienti')
 def search_clienti():
